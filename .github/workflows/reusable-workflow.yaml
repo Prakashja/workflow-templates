@@ -34,3 +34,10 @@ jobs:
          echo "export PATH" >> .profile
          source .profile
          mvn -version
+     - name: Checkout code
+       uses: actions/checkout@v2
+     - name: build
+       run: |
+        mvn compile
+        mvn package
+       
