@@ -44,10 +44,21 @@ jobs:
          sudo apt-get update
          sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
          docker --version
+ Build:
+   runs-on: ubuntu-latest
+   steps:
      - name: Checkout code
        uses: actions/checkout@v2
      - name: build
        run: |
         mvn compile
         mvn package
-       
+ Docker-Build:      
+   runs-on: ubuntu-latest
+   steps:
+     - name: checout code
+       uses: actions/checkout@v2
+     - name: Docker Build
+       run: |
+        echo "Docker Build Started"
+     
