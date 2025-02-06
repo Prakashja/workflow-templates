@@ -74,7 +74,7 @@ jobs:
        uses: actions/checkout@v2
      - name: Docker Build
        run: |
-        echo ${{ input.docker_url }}
+        echo ${{ inputs.docker_url }}
         echo Docker Build Started...
  Deployment:
   runs-on: ubuntu-latest
