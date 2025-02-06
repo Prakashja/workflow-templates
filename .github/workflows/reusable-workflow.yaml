@@ -77,16 +77,16 @@ jobs:
         echo ${{ inputs.docker_url }}
         echo Docker Build Started...
  Publish-Docker-Image:
-  runs-on: ubuntu-latest
-  env:
-    env_var: ${{ vars.ENV_CONTEXT_VAR }}
-  environment: ${{ vars.ENVIRONMENT_NAME }}
-  steps: 
+   runs-on: ubuntu-latest
+   needs: Docker-Build
+   environment: ${{ vars.ENVIRONMENT_NAME }}
+   steps: 
      - name: checout code
        uses: actions/checkout@v2
      - name: Docker publish
        run: |
-        echo pushing to docker registory ${{ vars.DOCKER_URI }}...
-        echo ::set-output name=status::$status
+        echo "pushing to docker registory: $DOCKER_URI"
+       env:
+         DOCKER_URI: ${{ vars.DOCKER_URI }}  
   
      
