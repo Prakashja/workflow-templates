@@ -79,7 +79,7 @@ jobs:
  Publish-Docker-Image:
    runs-on: ubuntu-latest
    needs: Docker-Build
-   environment: development
+   environment: ${GITHUB_REF##*/}
    steps: 
      - name: checout code
        uses: actions/checkout@v2
