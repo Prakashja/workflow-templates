@@ -79,7 +79,7 @@ jobs:
  Publish-Docker-Image:
    runs-on: ubuntu-latest
    needs: Docker-Build
-   environment: ${{ vars.ENVIRONMENT_NAME }}
+   environment: development
    steps: 
      - name: checout code
        uses: actions/checkout@v2
