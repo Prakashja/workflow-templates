@@ -1,0 +1,80 @@
+name: Reuable workflow
+
+on:
+   workflow_call:
+        
+env:
+  DAY_OF_WEEK: Monday
+
+jobs:
+  run_lint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: install_pylint
+      run: |
+        sudo apt-get install python3-pip -y
+        sudo pip install pylint
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: lint
+      run: |
+        pylint .
+  run_unit_test:
+    needs: run_lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: install_pytest
+        run: |
+          sudo apt-get install python3-pip -y
+          sudo pip install -U pytest
+      - name: unit-test
+        run: |
+          pytest .
+  run_aqua_test:
+    needs: run_lint
+    runs-on: ubuntu-latest
+    env:
+      Greeting: Hello
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: install_pytest
+        run: |
+         echo "$Greeting $First_Name. Today is $DAY_OF_WEEK!"
+         echo "Aqua test are passed successfully ....."
+        env:
+          First_Name: John
+  run_docker_build:
+    needs: run_unit_test
+    runs-on: ubuntu-latest    
+    environment: ${{ github.ref == 'refs/heads/master' && 'prod' || github.ref == 'refs/heads/staging' && 'staging' || 'dev' }}
+    steps:    
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: docker_run
+        run: |
+          echo "DOCKER_URI=${{ vars.DOCKER_URI }}"
+          echo "API_KEY=${{ secrets.API_KEY }}"
+  run_docker_push:
+    needs: run_docker_build
+    runs-on: ubuntu-latest    
+    environment: ${{ github.ref == 'refs/heads/master' && 'prod' || github.ref == 'refs/heads/staging' && 'staging' || 'dev' }}
+    steps:    
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: docker_run
+        run: |
+          echo "Pushing docker image to DOCKER_URI=${{ vars.DOCKER_URI }}"
+          echo "API_KEY=${{ secrets.API_KEY }}" 
+  run_helm_update:
+    needs: run_docker_push
+    runs-on: ubuntu-latest    
+    environment: ${{ github.ref == 'refs/heads/master' && 'prod' || github.ref == 'refs/heads/staging' && 'staging' || 'dev' }}
+    steps:    
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: docker_run
+        run: |
+          echo "updating helm values.yaml with lates image"          
